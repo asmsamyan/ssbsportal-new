@@ -1,92 +1,45 @@
-<!doctype html>
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>SSBS Portal • Dashboard</title>
+  <meta charset="UTF-8">
+  <title>SSBS Portal – Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
   <style>
-    :root{--bg:#0b1220;--panel:#101a2e;--ink:#eaf2ff;--muted:#87a1c1;--line:#223149;--brand:#00f4ff;--brand2:#7c4dff;--ring:rgba(0,244,255,.35)}
-    .light{--bg:#f6f9ff;--panel:#ffffff;--ink:#0c1b2b;--muted:#3e5878;--line:#dfe8f5}
-    *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--ink);font:14px system-ui,Segoe UI,Roboto,Inter}
-    .layout{display:flex;min-height:100vh}
-    .side{width:280px;background:var(--panel);border-right:1px solid var(--line);padding:14px;display:flex;flex-direction:column;gap:10px}
-    .brand{font-weight:900;letter-spacing:.3px;background:linear-gradient(135deg,var(--brand),var(--brand2));-webkit-background-clip:text;background-clip:text;color:transparent}
-    .row{display:flex;gap:8px;align-items:center}
-    .btn{border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:10px;padding:8px 12px;cursor:pointer;font-weight:800}
-    .menu{display:flex;flex-direction:column;gap:8px;margin-top:6px}
-    .link{border:1px solid var(--line);border-radius:10px;padding:10px;cursor:pointer}
-    .link.active{outline:2px solid var(--ring)}
-    .main{flex:1;display:flex;flex-direction:column}
-    .topbar{display:flex;gap:8px;align-items:center;justify-content:space-between;padding:12px;border-bottom:1px solid var(--line)}
-    .frameWrap{flex:1;padding:12px}
-    iframe{width:100%;height:calc(100vh - 80px);border:1px solid var(--line);border-radius:14px;background:#0f1728}
-    .light iframe{background:#fff}
-    .muted{color:var(--muted)}
+    body.light { background: #f8fafc; color: #1e293b; }
+    body.dark { background: #0f172a; color: #f8fafc; }
+    .card { @apply rounded-xl shadow-md p-4 bg-white dark:bg-gray-800; }
+    .btn { @apply px-4 py-2 rounded-lg font-semibold text-white bg-indigo-600 hover:bg-indigo-700; }
   </style>
 </head>
-<body>
-<div class="layout">
-  <aside class="side">
-    <div class="row">
-      <div class="brand">SSBS Portal</div>
-      <button id="themeBtn" class="btn" style="margin-left:auto">🌙 Dark</button>
+<body class="dark">
+  <!-- Header -->
+  <header class="flex items-center justify-between px-6 py-4 bg-indigo-700 text-white">
+    <h1 class="text-xl font-bold">SSBS Portal Dashboard</h1>
+    <div class="flex items-center gap-4">
+      <span id="hiUser" class="font-medium"></span>
+      <button id="themeBtn" class="px-3 py-1 rounded bg-indigo-500 hover:bg-indigo-600">🌙 Dark</button>
+      <button id="btn_logout" class="px-3 py-1 rounded bg-red-600 hover:bg-red-700">Logout</button>
     </div>
-    <div class="muted" id="who">—</div>
-    <div class="menu">
-      <div class="link" id="m-client" onclick="openView('client')">Client Management</div>
-      <div class="link" id="m-task"   onclick="openView('task')">Task Management</div>
-      <div class="link" id="m-mcp"    onclick="openView('mcp')">Master Control Panel</div>
-    </div>
-    <div class="muted" style="margin-top:auto;font-size:12px">
-      Tip: If an app refuses to load in the frame, use “Open in new tab”.
-    </div>
-  </aside>
+  </header>
 
-  <section class="main">
-    <div class="topbar">
-      <div class="row" style="gap:10px">
-        <button class="btn" onclick="openView('client')">Client</button>
-        <button class="btn" onclick="openView('task')">Tasks</button>
-        <button class="btn" onclick="openView('mcp')">Master</button>
-      </div>
-      <div class="row">
-        <button id="openBtn" class="btn" onclick="openInNewTab()">↗ Open in new tab</button>
-        <button class="btn" onclick="SSBS.logout()">Logout</button>
-      </div>
-    </div>
-    <div class="frameWrap">
-      <iframe id="frame" src="about:blank" referrerpolicy="no-referrer-when-downgrade"></iframe>
-    </div>
-  </section>
-</div>
+  <!-- Dashboard Content -->
+  <main class="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <button id="btn_dashboard" class="btn">🏠 Dashboard</button>
+    <button id="btn_daily" class="btn">📅 Daily Application</button>
+    <button id="btn_expense" class="btn">💰 Expense Management</button>
+    <button id="btn_receive" class="btn">💵 Receiving Payments</button>
+    <button id="btn_transfer" class="btn">🔄 Internal Transfer & Loan</button>
+    <button id="btn_invoice" class="btn">🧾 Invoice Management</button>
+    <button id="btn_invoice_dummy" class="btn">📑 Dummy Invoice</button>
+    <button id="btn_quote" class="btn">💬 Quotation</button>
+    <button id="btn_statement" class="btn">📊 Client Statement</button>
+    <button id="btn_docs" class="btn">📂 Document Management</button>
+    <button id="btn_client" class="btn">👥 Client Management</button>
+    <button id="btn_task" class="btn">✅ Task Management</button>
+    <button id="btn_mcp" class="btn">⚙️ Master Control Panel</button>
+  </main>
 
-<script src="app.js"></script>
-<script>
-  initTheme();
-  // boot
-  const session = SSBS.requireSession(); // redirects to login if missing
-  document.getElementById('who').textContent = `${session.name} • ${session.role.toUpperCase()}`;
-
-  // render
-  const frame = document.getElementById('frame');
-  let currentId = null;
-
-  function openView(id){
-    currentId = id;
-    document.querySelectorAll('.link').forEach(el => el.classList.remove('active'));
-    const menuEl = document.getElementById('m-'+id); if(menuEl) menuEl.classList.add('active');
-
-    const url = SSBS.urlFor(session.name, id); // id = 'client' | 'task' | 'mcp'
-    if (!url) { frame.srcdoc = `<div style="padding:16px">No URL mapped for ${session.name} / ${id}</div>`; return; }
-    frame.src = url;
-  }
-  function openInNewTab(){
-    const url = SSBS.urlFor(session.name, currentId || 'client');
-    if (url) window.open(url, '_blank');
-  }
-
-  // default view
-  openView('client');
-</script>
+  <script src="app.js"></script>
 </body>
 </html>
