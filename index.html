@@ -8,18 +8,15 @@
   <style>
     body.light { background: #f8fafc; color: #1e293b; }
     body.dark { background: #0f172a; color: #f8fafc; }
-    .card { @apply max-w-md mx-auto mt-24 p-8 rounded-xl shadow-md bg-white dark:bg-gray-800; }
-    .btn { @apply w-full mt-4 py-2 rounded-lg font-semibold text-white bg-indigo-600 hover:bg-indigo-700; }
-    .input { @apply w-full mt-2 px-3 py-2 rounded-lg border dark:bg-gray-700 dark:border-gray-600; }
   </style>
 </head>
 <body class="dark">
-  <div class="card">
+  <div class="max-w-md mx-auto mt-24 p-8 rounded-xl shadow-md bg-white dark:bg-gray-800">
     <h1 class="text-2xl font-bold text-center mb-6">SSBS Portal Login</h1>
 
     <form>
       <label for="userPick" class="block mb-2 font-semibold">User</label>
-      <select id="userPick" class="input">
+      <select id="userPick" class="w-full mt-2 px-3 py-2 rounded-lg border dark:bg-gray-700 dark:border-gray-600">
         <option value="">-- Select User --</option>
         <option value="Sameer">Sameer</option>
         <option value="Mohamed Sabri">Mohamed Sabri</option>
@@ -28,12 +25,12 @@
       </select>
 
       <label for="pass" class="block mt-4 mb-2 font-semibold">Password</label>
-      <input id="pass" type="password" placeholder="Enter password" class="input"/>
+      <input id="pass" type="password" placeholder="Enter password" class="w-full mt-2 px-3 py-2 rounded-lg border dark:bg-gray-700 dark:border-gray-600"/>
 
-      <button id="loginBtn" type="submit" class="btn">Login</button>
+      <button id="loginBtn" type="submit" class="w-full mt-4 py-2 rounded-lg font-semibold text-white bg-indigo-600 hover:bg-indigo-700">Login</button>
     </form>
 
-    <button id="themeBtn" class="btn mt-3 bg-gray-600 hover:bg-gray-700">🌙 Dark</button>
+    <button id="themeBtn" class="w-full mt-3 py-2 rounded-lg font-semibold text-white bg-gray-600 hover:bg-gray-700">🌙 Dark</button>
   </div>
 </body>
 </html>
