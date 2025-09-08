@@ -11,12 +11,12 @@
   </style>
 </head>
 <body class="dark">
-  <div class="max-w-md mx-auto mt-24 p-8 rounded-xl shadow-md bg-white dark:bg-gray-800">
+  <div class="max-w-md mx-auto mt-24 p-8 rounded-xl shadow-md bg-white dark:bg-gray-800 text-gray-900 dark:text-white">
     <h1 class="text-2xl font-bold text-center mb-6">SSBS Portal Login</h1>
 
     <form>
-      <label for="userPick" class="block mb-2 font-semibold">User</label>
-      <select id="userPick" class="w-full mt-2 px-3 py-2 rounded-lg border dark:bg-gray-700 dark:border-gray-600">
+      <label for="userPick" class="block mb-2 font-semibold text-gray-700 dark:text-gray-300">User</label>
+      <select id="userPick" class="w-full mt-2 px-3 py-2 rounded-lg border dark:bg-gray-700 dark:border-gray-600 text-gray-900 dark:text-white">
         <option value="">-- Select User --</option>
         <option value="Sameer">Sameer</option>
         <option value="Mohamed Sabri">Mohamed Sabri</option>
@@ -24,13 +24,15 @@
         <option value="Mohamed Jebras">Mohamed Jebras</option>
       </select>
 
-      <label for="pass" class="block mt-4 mb-2 font-semibold">Password</label>
-      <input id="pass" type="password" placeholder="Enter password" class="w-full mt-2 px-3 py-2 rounded-lg border dark:bg-gray-700 dark:border-gray-600"/>
+      <label for="pass" class="block mt-4 mb-2 font-semibold text-gray-700 dark:text-gray-300">Password</label>
+      <input id="pass" type="password" placeholder="Enter password" class="w-full mt-2 px-3 py-2 rounded-lg border dark:bg-gray-700 dark:border-gray-600 text-gray-900 dark:text-white"/>
 
       <button id="loginBtn" type="submit" class="w-full mt-4 py-2 rounded-lg font-semibold text-white bg-indigo-600 hover:bg-indigo-700">Login</button>
     </form>
 
     <button id="themeBtn" class="w-full mt-3 py-2 rounded-lg font-semibold text-white bg-gray-600 hover:bg-gray-700">🌙 Dark</button>
   </div>
+
+  <script src="app.js"></script>
 </body>
 </html>
