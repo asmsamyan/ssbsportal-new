@@ -8,12 +8,9 @@
   <style>
     body.light { background: #f8fafc; color: #1e293b; }
     body.dark { background: #0f172a; color: #f8fafc; }
-    .card { @apply rounded-xl shadow-md p-4 bg-white dark:bg-gray-800; }
-    .btn { @apply px-4 py-2 rounded-lg font-semibold text-white bg-indigo-600 hover:bg-indigo-700; }
   </style>
 </head>
 <body class="dark">
-  <!-- Header -->
   <header class="flex items-center justify-between px-6 py-4 bg-indigo-700 text-white">
     <h1 class="text-xl font-bold">SSBS Portal Dashboard</h1>
     <div class="flex items-center gap-4">
@@ -23,23 +20,22 @@
     </div>
   </header>
 
-  <!-- Dashboard Content -->
   <main class="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-    <button id="btn_dashboard" class="btn">🏠 Dashboard</button>
-    <button id="btn_daily" class="btn">📅 Daily Application</button>
-    <button id="btn_expense" class="btn">💰 Expense Management</button>
-    <button id="btn_receive" class="btn">💵 Receiving Payments</button>
-    <button id="btn_transfer" class="btn">🔄 Internal Transfer & Loan</button>
-    <button id="btn_invoice" class="btn">🧾 Invoice Management</button>
-    <button id="btn_invoice_dummy" class="btn">📑 Dummy Invoice</button>
-    <button id="btn_quote" class="btn">💬 Quotation</button>
-    <button id="btn_statement" class="btn">📊 Client Statement</button>
-    <button id="btn_docs" class="btn">📂 Document Management</button>
-    <button id="btn_client" class="btn">👥 Client Management</button>
-    <button id="btn_task" class="btn">✅ Task Management</button>
-    <button id="btn_mcp" class="btn">⚙️ Master Control Panel</button>
+    <button id="btn_dashboard" class="px-4 py-2 rounded-lg font-semibold text-white bg-indigo-600 hover:bg-indigo-700">🏠 Dashboard</button>
+    <button id="btn_daily" class="px-4 py-2 rounded-lg font-semibold text-white bg-indigo-600 hover:bg-indigo-700">📅 Daily Application</button>
+    <button id="btn_expense" class="px-4 py-2 rounded-lg font-semibold text-white bg-indigo-600 hover:bg-indigo-700">💰 Expense Management</button>
+    <button id="btn_receive" class="px-4 py-2 rounded-lg font-semibold text-white bg-indigo-600 hover:bg-indigo-700">💵 Receiving Payments</button>
+    <button id="btn_transfer" class="px-4 py-2 rounded-lg font-semibold text-white bg-indigo-600 hover:bg-indigo-700">🔄 Internal Transfer & Loan</button>
+    <button id="btn_invoice" class="px-4 py-2 rounded-lg font-semibold text-white bg-indigo-600 hover:bg-indigo-700">🧾 Invoice Management</button>
+    <button id="btn_invoice_dummy" class="px-4 py-2 rounded-lg font-semibold text-white bg-indigo-600 hover:bg-indigo-700">📑 Dummy Invoice</button>
+    <button id="btn_quote" class="px-4 py-2 rounded-lg font-semibold text-white bg-indigo-600 hover:bg-indigo-700">💬 Quotation</button>
+    <button id="btn_statement" class="px-4 py-2 rounded-lg font-semibold text-white bg-indigo-600 hover:bg-indigo-700">📊 Client Statement</button>
+    <button id="btn_docs" class="px-4 py-2 rounded-lg font-semibold text-white bg-indigo-600 hover:bg-indigo-700">📂 Document Management</button>
+    <button id="btn_client" class="px-4 py-2 rounded-lg font-semibold text-white bg-indigo-600 hover:bg-indigo-700">👥 Client Management</button>
+    <button id="btn_task" class="px-4 py-2 rounded-lg font-semibold text-white bg-indigo-600 hover:bg-indigo-700">✅ Task Management</button>
+    <button id="btn_mcp" class="px-4 py-2 rounded-lg font-semibold text-white bg-indigo-600 hover:bg-indigo-700">⚙️ Master Control Panel</button>
   </main>
-
+  
   <script src="app.js"></script>
 </body>
 </html>
