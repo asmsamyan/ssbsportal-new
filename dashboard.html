@@ -1,41 +1,302 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>SSBS Portal – Dashboard</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Tailwind (CDN) -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+
+  <!-- Brand + Theme tokens -->
   <style>
-    body.light { background: #f8fafc; color: #1e293b; }
-    body.dark { background: #0f172a; color: #f8fafc; }
+    :root{
+      /* SSBS brand */
+      --brand:#F4393A; --brand-accent:#FF7B79; --brand-dark:#C12D2E;
+      /* Dark (default) */
+      --bg:#0f172a; --panel:#111827; --panel-2:#0b1220; --ink:#e5e7eb; --muted:#94a3b8; --line:#1f2937;
+      --grad:linear-gradient(135deg,var(--brand),var(--brand-accent));
+      --ring:rgba(244,57,58,.35);
+    }
+    body.light{
+      --bg:#f8fafc; --panel:#ffffff; --panel-2:#f1f5f9; --ink:#0f172a; --muted:#475569; --line:#e2e8f0;
+      --ring:rgba(244,57,58,.25);
+    }
+    /* use variables */
+    body{ background:var(--bg); color:var(--ink); }
+    .panel{ background:var(--panel); border-color:var(--line); }
+    .panel-2{ background:var(--panel-2); border-color:var(--line); }
+    .muted{ color:var(--muted); }
+    .brand-grad{ background:var(--grad); }
+    .ring-brand:focus{ box-shadow:0 0 0 4px var(--ring); outline:none; }
+
+    /* scrollbar (optional) */
+    .thin-scroll::-webkit-scrollbar{ width:8px }
+    .thin-scroll::-webkit-scrollbar-thumb{ background:#00000022; border-radius:999px }
+    body.light .thin-scroll::-webkit-scrollbar-thumb{ background:#00000033 }
   </style>
 </head>
-<body class="dark">
-  <header class="flex items-center justify-between px-6 py-4 bg-indigo-700 text-white">
-    <h1 class="text-xl font-bold">SSBS Portal Dashboard</h1>
-    <div class="flex items-center gap-4">
-      <span id="hiUser" class="font-medium"></span>
-      <button id="themeBtn" class="px-3 py-1 rounded bg-indigo-500 hover:bg-indigo-600">🌙 Dark</button>
-      <button id="btn_logout" class="px-3 py-1 rounded bg-red-600 hover:bg-red-700">Logout</button>
-    </div>
-  </header>
 
-  <main class="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-    <button id="btn_dashboard" class="px-4 py-2 rounded-lg font-semibold text-white bg-indigo-600 hover:bg-indigo-700">🏠 Dashboard</button>
-    <button id="btn_daily" class="px-4 py-2 rounded-lg font-semibold text-white bg-indigo-600 hover:bg-indigo-700">📅 Daily Application</button>
-    <button id="btn_expense" class="px-4 py-2 rounded-lg font-semibold text-white bg-indigo-600 hover:bg-indigo-700">💰 Expense Management</button>
-    <button id="btn_receive" class="px-4 py-2 rounded-lg font-semibold text-white bg-indigo-600 hover:bg-indigo-700">💵 Receiving Payments</button>
-    <button id="btn_transfer" class="px-4 py-2 rounded-lg font-semibold text-white bg-indigo-600 hover:bg-indigo-700">🔄 Internal Transfer & Loan</button>
-    <button id="btn_invoice" class="px-4 py-2 rounded-lg font-semibold text-white bg-indigo-600 hover:bg-indigo-700">🧾 Invoice Management</button>
-    <button id="btn_invoice_dummy" class="px-4 py-2 rounded-lg font-semibold text-white bg-indigo-600 hover:bg-indigo-700">📑 Dummy Invoice</button>
-    <button id="btn_quote" class="px-4 py-2 rounded-lg font-semibold text-white bg-indigo-600 hover:bg-indigo-700">💬 Quotation</button>
-    <button id="btn_statement" class="px-4 py-2 rounded-lg font-semibold text-white bg-indigo-600 hover:bg-indigo-700">📊 Client Statement</button>
-    <button id="btn_docs" class="px-4 py-2 rounded-lg font-semibold text-white bg-indigo-600 hover:bg-indigo-700">📂 Document Management</button>
-    <button id="btn_client" class="px-4 py-2 rounded-lg font-semibold text-white bg-indigo-600 hover:bg-indigo-700">👥 Client Management</button>
-    <button id="btn_task" class="px-4 py-2 rounded-lg font-semibold text-white bg-indigo-600 hover:bg-indigo-700">✅ Task Management</button>
-    <button id="btn_mcp" class="px-4 py-2 rounded-lg font-semibold text-white bg-indigo-600 hover:bg-indigo-700">⚙️ Master Control Panel</button>
-  </main>
-  
+<!-- default dark; router toggles .light on body -->
+<body class="">
+  <!-- Layout -->
+  <div class="min-h-screen flex">
+
+    <!-- Sidebar -->
+    <aside class="w-72 hidden md:flex flex-col border-r panel">
+      <!-- Brand / user -->
+      <div class="p-4 border-b border-gray-700" style="border-color:var(--line)">
+        <div class="flex items-center gap-3">
+          <!-- Replace with: <img src="assets/ssbs-logo.svg" class="w-10 h-10 rounded-lg" alt="SSBS"> -->
+          <div class="w-10 h-10 rounded-lg brand-grad flex items-center justify-center text-white font-extrabold shadow">SS</div>
+          <div>
+            <div class="text-lg font-extrabold">SSBS</div>
+            <div class="text-xs uppercase tracking-wide muted">Business Portal</div>
+          </div>
+        </div>
+        <div class="mt-3 text-sm">
+          <span class="muted">Signed in as</span> <b id="hiUser">—</b>
+        </div>
+      </div>
+
+      <!-- Nav -->
+      <nav class="flex-1 overflow-y-auto thin-scroll p-3 space-y-1">
+        <!-- Dashboard (override) -->
+        <button data-mod="dashboard" class="w-full text-left px-3 py-2 rounded-lg panel-2 border hover:opacity-95 focus:ring-brand ring-brand">
+          <span class="mr-2">🏠</span> Dashboard
+        </button>
+
+        <div class="mt-3 text-xs uppercase tracking-wider muted px-2">Operations</div>
+        <button data-mod="daily" class="w-full text-left px-3 py-2 rounded-lg panel-2 border hover:opacity-95">
+          <span class="mr-2">📅</span> Daily Application
+        </button>
+        <button data-mod="expense" class="w-full text-left px-3 py-2 rounded-lg panel-2 border hover:opacity-95">
+          <span class="mr-2">💰</span> Expense Management
+        </button>
+        <button data-mod="receive" class="w-full text-left px-3 py-2 rounded-lg panel-2 border hover:opacity-95">
+          <span class="mr-2">💵</span> Receiving Payments
+        </button>
+        <button data-mod="transfer" class="w-full text-left px-3 py-2 rounded-lg panel-2 border hover:opacity-95">
+          <span class="mr-2">🔄</span> Internal Transfer & Loan
+        </button>
+
+        <div class="mt-3 text-xs uppercase tracking-wider muted px-2">Billing</div>
+        <button data-mod="invoice" class="w-full text-left px-3 py-2 rounded-lg panel-2 border hover:opacity-95">
+          <span class="mr-2">🧾</span> Invoice Management
+        </button>
+        <button data-mod="invoice_d" class="w-full text-left px-3 py-2 rounded-lg panel-2 border hover:opacity-95">
+          <span class="mr-2">📑</span> Dummy Invoice
+        </button>
+        <button data-mod="quote" class="w-full text-left px-3 py-2 rounded-lg panel-2 border hover:opacity-95">
+          <span class="mr-2">💬</span> Quotation
+        </button>
+        <button data-mod="statement" class="w-full text-left px-3 py-2 rounded-lg panel-2 border hover:opacity-95">
+          <span class="mr-2">📊</span> Client Statement
+        </button>
+
+        <div class="mt-3 text-xs uppercase tracking-wider muted px-2">Records</div>
+        <button data-mod="docs" class="w-full text-left px-3 py-2 rounded-lg panel-2 border hover:opacity-95">
+          <span class="mr-2">📂</span> Document Management
+        </button>
+        <button data-mod="client" class="w-full text-left px-3 py-2 rounded-lg panel-2 border hover:opacity-95">
+          <span class="mr-2">👥</span> Client Management
+        </button>
+
+        <div class="mt-3 text-xs uppercase tracking-wider muted px-2">Team</div>
+        <button data-mod="task" class="w-full text-left px-3 py-2 rounded-lg panel-2 border hover:opacity-95">
+          <span class="mr-2">✅</span> Task Management
+        </button>
+        <button data-mod="mcp" class="w-full text-left px-3 py-2 rounded-lg panel-2 border hover:opacity-95">
+          <span class="mr-2">⚙️</span> Master Control Panel
+        </button>
+      </nav>
+
+      <!-- Footer actions -->
+      <div class="p-3 border-t" style="border-color:var(--line)">
+        <div class="flex gap-2">
+          <button id="themeBtn" class="flex-1 px-3 py-2 rounded-lg border panel-2 hover:opacity-95">☀️ Light</button>
+          <button id="btn_logout" class="flex-1 px-3 py-2 rounded-lg text-white brand-grad hover:opacity-95">Logout</button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Mobile topbar (shows on < md) -->
+    <header class="md:hidden w-full panel border-b">
+      <div class="px-4 py-3 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded-lg brand-grad flex items-center justify-center text-white font-extrabold">SS</div>
+          <div>
+            <div class="font-extrabold">SSBS</div>
+            <div class="text-xs muted -mt-0.5">Business Portal</div>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <button id="themeBtnMobile" class="px-3 py-1 rounded-lg border panel-2">☀️ Light</button>
+          <button id="btn_logout_m" class="px-3 py-1 rounded-lg text-white brand-grad">Logout</button>
+          <button id="menuToggle" class="px-3 py-1 rounded-lg border panel-2">☰</button>
+        </div>
+      </div>
+      <!-- slide-down menu -->
+      <div id="mobileMenu" class="hidden px-3 pb-3 space-y-1">
+        <div class="px-2 text-xs uppercase tracking-wider muted">Hello, <b id="hiUser_m">—</b></div>
+        <div class="grid grid-cols-2 gap-2">
+          <button data-mod="dashboard" class="px-3 py-2 rounded-lg panel-2 border">🏠 Dashboard</button>
+          <button data-mod="daily" class="px-3 py-2 rounded-lg panel-2 border">📅 Daily</button>
+          <button data-mod="expense" class="px-3 py-2 rounded-lg panel-2 border">💰 Expense</button>
+          <button data-mod="receive" class="px-3 py-2 rounded-lg panel-2 border">💵 Receive</button>
+          <button data-mod="transfer" class="px-3 py-2 rounded-lg panel-2 border">🔄 Transfer</button>
+          <button data-mod="invoice" class="px-3 py-2 rounded-lg panel-2 border">🧾 Invoice</button>
+          <button data-mod="invoice_d" class="px-3 py-2 rounded-lg panel-2 border">📑 Dummy</button>
+          <button data-mod="quote" class="px-3 py-2 rounded-lg panel-2 border">💬 Quote</button>
+          <button data-mod="statement" class="px-3 py-2 rounded-lg panel-2 border">📊 Statement</button>
+          <button data-mod="docs" class="px-3 py-2 rounded-lg panel-2 border">📂 Docs</button>
+          <button data-mod="client" class="px-3 py-2 rounded-lg panel-2 border">👥 Clients</button>
+          <button data-mod="task" class="px-3 py-2 rounded-lg panel-2 border">✅ Task</button>
+          <button data-mod="mcp" class="px-3 py-2 rounded-lg panel-2 border">⚙️ MCP</button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main content -->
+    <main class="flex-1">
+      <!-- Topbar (desktop) -->
+      <div class="hidden md:flex items-center justify-between px-6 py-4 border-b panel">
+        <div class="flex items-center gap-2">
+          <h1 class="text-xl font-bold">Dashboard</h1>
+          <span class="muted">• quick actions</span>
+        </div>
+        <div class="text-sm">
+          Welcome,&nbsp;<b id="hiUser_top">—</b>
+        </div>
+      </div>
+
+      <!-- Content -->
+      <div class="p-6 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+        <!-- Quick launch cards (open modules) -->
+        <button data-mod="daily" class="px-5 py-4 rounded-xl border panel hover:opacity-95 text-left">
+          <div class="text-2xl">📅</div>
+          <div class="mt-2 font-semibold">Daily Application</div>
+          <div class="text-sm muted">Enter new application, charges, portal, clients…</div>
+        </button>
+        <button data-mod="invoice" class="px-5 py-4 rounded-xl border panel hover:opacity-95 text-left">
+          <div class="text-2xl">🧾</div>
+          <div class="mt-2 font-semibold">Invoice Management</div>
+          <div class="text-sm muted">Create, view, or print invoices</div>
+        </button>
+        <button data-mod="client" class="px-5 py-4 rounded-xl border panel hover:opacity-95 text-left">
+          <div class="text-2xl">👥</div>
+          <div class="mt-2 font-semibold">Client Management</div>
+          <div class="text-sm muted">Add, edit, or search clients</div>
+        </button>
+
+        <button data-mod="expense" class="px-5 py-4 rounded-xl border panel hover:opacity-95 text-left">
+          <div class="text-2xl">💰</div>
+          <div class="mt-2 font-semibold">Expense Management</div>
+          <div class="text-sm muted">Track company expenses</div>
+        </button>
+        <button data-mod="receive" class="px-5 py-4 rounded-xl border panel hover:opacity-95 text-left">
+          <div class="text-2xl">💵</div>
+          <div class="mt-2 font-semibold">Receiving Payments</div>
+          <div class="text-sm muted">Record payments from clients</div>
+        </button>
+        <button data-mod="transfer" class="px-5 py-4 rounded-xl border panel hover:opacity-95 text-left">
+          <div class="text-2xl">🔄</div>
+          <div class="mt-2 font-semibold">Internal Transfer & Loan</div>
+          <div class="text-sm muted">Move funds between accounts</div>
+        </button>
+
+        <button data-mod="quote" class="px-5 py-4 rounded-xl border panel hover:opacity-95 text-left">
+          <div class="text-2xl">💬</div>
+          <div class="mt-2 font-semibold">Quotation</div>
+          <div class="text-sm muted">Create and manage quotes</div>
+        </button>
+        <button data-mod="statement" class="px-5 py-4 rounded-xl border panel hover:opacity-95 text-left">
+          <div class="text-2xl">📊</div>
+          <div class="mt-2 font-semibold">Client Statement</div>
+          <div class="text-sm muted">Statement of account by client</div>
+        </button>
+        <button data-mod="docs" class="px-5 py-4 rounded-xl border panel hover:opacity-95 text-left">
+          <div class="text-2xl">📂</div>
+          <div class="mt-2 font-semibold">Document Management</div>
+          <div class="text-sm muted">Store and retrieve documents</div>
+        </button>
+
+        <button data-mod="task" class="px-5 py-4 rounded-xl border panel hover:opacity-95 text-left">
+          <div class="text-2xl">✅</div>
+          <div class="mt-2 font-semibold">Task Management</div>
+          <div class="text-sm muted">Assign and monitor tasks</div>
+        </button>
+        <button data-mod="mcp" class="px-5 py-4 rounded-xl border panel hover:opacity-95 text-left">
+          <div class="text-2xl">⚙️</div>
+          <div class="mt-2 font-semibold">Master Control Panel</div>
+          <div class="text-sm muted">Global configuration</div>
+        </button>
+      </div>
+    </main>
+  </div>
+
+  <!-- Router (your unified logic) -->
   <script src="app.js"></script>
+
+  <!-- Page wiring (sidebar, theme, session) -->
+  <script>
+    // Theme: match router's 'ssbs_theme' key
+    (function themeBoot(){
+      const saved = localStorage.getItem('ssbs_theme') || 'dark';
+      if(saved === 'light') document.body.classList.add('light');
+      function setLabel(btn){ if(!btn) return; const isLight = document.body.classList.contains('light'); btn.textContent = isLight ? '🌙 Dark' : '☀️ Light'; }
+      const btnD = document.getElementById('themeBtn');
+      const btnM = document.getElementById('themeBtnMobile');
+      function toggle(){
+        document.body.classList.toggle('light');
+        localStorage.setItem('ssbs_theme', document.body.classList.contains('light') ? 'light' : 'dark');
+        setLabel(btnD); setLabel(btnM);
+      }
+      if(btnD){ btnD.onclick = toggle; setLabel(btnD); }
+      if(btnM){ btnM.onclick = toggle; setLabel(btnM); }
+    })();
+
+    // Session + user
+    (function userBoot(){
+      if(!window.SSBS){ console.error('SSBS router missing (app.js)'); return; }
+      const u = SSBS.currentUser();
+      if(!u){ location.href = 'index.html'; return; }
+      // Put name in UI
+      ['hiUser','hiUser_top','hiUser_m'].forEach(id => {
+        const el = document.getElementById(id);
+        if(el) el.textContent = u.name;
+      });
+      // Keep-alive on interaction
+      ['click','keydown','touchstart'].forEach(evt =>
+        document.addEventListener(evt, () => SSBS.touch(), { passive:true })
+      );
+    })();
+
+    // Sidebar + mobile menu actions
+    (function wireNav(){
+      // All buttons with data-mod -> open module
+      function bind(root){
+        Array.from(root.querySelectorAll('[data-mod]')).forEach(btn=>{
+          btn.addEventListener('click', ()=> SSBS.openModule(btn.dataset.mod));
+        });
+      }
+      bind(document);
+
+      // Mobile menu toggle
+      const tog = document.getElementById('menuToggle');
+      const menu = document.getElementById('mobileMenu');
+      if(tog && menu){
+        tog.onclick = () => menu.classList.toggle('hidden');
+      }
+
+      // Logout
+      const loD = document.getElementById('btn_logout');
+      const loM = document.getElementById('btn_logout_m');
+      function doLogout(){ SSBS.logout(); location.href = 'index.html'; }
+      if(loD) loD.onclick = doLogout;
+      if(loM) loM.onclick = doLogout;
+    })();
+  </script>
 </body>
 </html>
+
