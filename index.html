@@ -1,38 +1,132 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>SSBS Portal – Login</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Tailwind CDN -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+
+  <!-- Brand & Theme tokens -->
   <style>
-    body.light { background: #f8fafc; color: #1e293b; }
-    body.dark { background: #0f172a; color: #f8fafc; }
+    :root{
+      /* SSBS brand */
+      --brand:#F4393A; --brand-accent:#FF7B79; --brand-dark:#C12D2E;
+      --grad:linear-gradient(135deg,var(--brand),var(--brand-accent));
+      /* Dark default */
+      --bg:#0f172a; --panel:#111827; --ink:#f8fafc; --muted:#94a3b8; --line:#1f2937;
+      --ring:rgba(244,57,58,.35);
+    }
+    body.light{
+      --bg:#f8fafc; --panel:#ffffff; --ink:#0f172a; --muted:#475569; --line:#e2e8f0;
+      --ring:rgba(244,57,58,.25);
+    }
+    body{ background:var(--bg); color:var(--ink); }
+    .panel{ background:var(--panel); border-color:var(--line); }
+    .muted{ color:var(--muted); }
+    .brand-grad{ background:var(--grad); }
+    .ring-brand:focus{ box-shadow:0 0 0 4px var(--ring); outline: none; }
+  </style>
+
+  <!-- Set theme early to avoid flash -->
+  <script>
+    (function(){
+      try{
+        const t = localStorage.getItem('ssbs_theme') || 'dark';
+        if (t === 'light') document.documentElement.classList.add('prelight');
+      }catch(_){}
+    })();
+  </script>
+  <style>
+    /* Tiny helper so prelight affects body before it exists */
+    .prelight body { background:#f8fafc; color:#0f172a; }
   </style>
 </head>
-<body class="dark">
-  <div class="max-w-md mx-auto mt-24 p-8 rounded-xl shadow-md bg-white dark:bg-gray-800 text-gray-900 dark:text-white">
-    <h1 class="text-2xl font-bold text-center mb-6">SSBS Portal Login</h1>
 
-    <form>
-      <label for="userPick" class="block mb-2 font-semibold text-gray-700 dark:text-gray-300">User</label>
-      <select id="userPick" class="w-full mt-2 px-3 py-2 rounded-lg border dark:bg-gray-700 dark:border-gray-600 text-gray-900 dark:text-white">
-        <option value="">-- Select User --</option>
-        <option value="Sameer">Sameer</option>
-        <option value="Mohamed Sabri">Mohamed Sabri</option>
-        <option value="Mohamed Afras">Mohamed Afras</option>
-        <option value="Mohamed Jebras">Mohamed Jebras</option>
-      </select>
+<body>
+  <script>
+    // finalize prelight
+    (function(){ try{ if(localStorage.getItem('ssbs_theme')==='light'){ document.body.classList.add('light'); } }catch(_){}})();
+  </script>
 
-      <label for="pass" class="block mt-4 mb-2 font-semibold text-gray-700 dark:text-gray-300">Password</label>
-      <input id="pass" type="password" placeholder="Enter password" class="w-full mt-2 px-3 py-2 rounded-lg border dark:bg-gray-700 dark:border-gray-600 text-gray-900 dark:text-white"/>
+  <div class="min-h-screen flex items-center justify-center px-4">
+    <div class="w-full max-w-md rounded-2xl border panel shadow-xl p-8">
+      <!-- Logo / Brand -->
+      <div class="flex items-center justify-center gap-3 mb-6">
+        <!-- Replace with your image if available -->
+        <!-- <img src="assets/ssbs-logo.svg" alt="SSBS" class="w-10 h-10 rounded-lg shadow" /> -->
+        <div class="w-10 h-10 rounded-lg brand-grad text-white font-extrabold grid place-items-center shadow">SS</div>
+        <div class="text-xl font-extrabold tracking-tight">
+          SSBS <span class="muted text-sm font-semibold">Business Portal</span>
+        </div>
+      </div>
 
-      <button id="loginBtn" type="submit" class="w-full mt-4 py-2 rounded-lg font-semibold text-white bg-indigo-600 hover:bg-indigo-700">Login</button>
-    </form>
+      <h1 class="text-2xl font-bold text-center mb-6">Sign in</h1>
 
-    <button id="themeBtn" class="w-full mt-3 py-2 rounded-lg font-semibold text-white bg-gray-600 hover:bg-gray-700">🌙 Dark</button>
+      <form id="loginForm" onsubmit="return false;">
+        <label for="userPick" class="block mb-2 font-semibold">User</label>
+        <select id="userPick" class="w-full px-3 py-2 rounded-lg border border-gray-300 ring-brand panel text-gray-900"
+                style="color:var(--ink); background:var(--panel); border-color:var(--line)">
+          <option value="">-- Select User --</option>
+          <option value="Sameer">Sameer</option>
+          <option value="Mohamed Sabri">Mohamed Sabri</option>
+          <option value="Mohamed Afras">Mohamed Afras</option>
+          <option value="Mohamed Jebras">Mohamed Jebras</option>
+        </select>
+
+        <label for="pass" class="block mt-4 mb-2 font-semibold">Password</label>
+        <div class="relative">
+          <input id="pass" type="password" placeholder="Enter password"
+                 class="w-full px-3 py-2 rounded-lg border ring-brand panel pr-10"
+                 style="color:var(--ink); background:var(--panel); border-color:var(--line)" />
+          <button type="button" id="togglePw"
+                  class="absolute right-2 top-1/2 transform -translate-y-1/2 text-sm px-2 py-1 rounded-md border"
+                  style="border-color:var(--line); background:var(--panel); color:var(--muted)">Show</button>
+        </div>
+
+        <button id="loginBtn" type="button"
+                class="w-full mt-5 py-2 rounded-lg text-white font-semibold brand-grad hover:opacity-95">
+          Login
+        </button>
+      </form>
+
+      <button id="themeBtn"
+              class="w-full mt-3 py-2 rounded-lg font-semibold border panel hover:opacity-95"
+              style="border-color:var(--line)">
+        ☀️ Light
+      </button>
+
+      <p class="mt-4 text-center text-sm muted">© <span id="year"></span> SSBS. All rights reserved.</p>
+    </div>
   </div>
 
+  <!-- Router / wiring -->
   <script src="app.js"></script>
+  <script>
+    // Year
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Show/Hide password
+    (function(){
+      const pw = document.getElementById('pass');
+      const t  = document.getElementById('togglePw');
+      if(!pw || !t) return;
+      t.onclick = () => {
+        const isPwd = pw.type === 'password';
+        pw.type = isPwd ? 'text' : 'password';
+        t.textContent = isPwd ? 'Hide' : 'Show';
+      };
+    })();
+
+    // If user presses Enter inside fields, click Login
+    (function(){
+      const btn = document.getElementById('loginBtn');
+      document.getElementById('loginForm').addEventListener('keydown', (e)=>{
+        if(e.key === 'Enter'){ e.preventDefault(); btn.click(); }
+      });
+    })();
+  </script>
 </body>
 </html>
+
