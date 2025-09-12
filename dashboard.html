@@ -1,302 +1,504 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>SSBS Portal – Dashboard</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>SSBS • Clients</title>
 
-  <!-- Tailwind (CDN) -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+  <!-- Fonts (optional, keep if you want the look) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
 
-  <!-- Brand + Theme tokens -->
+  <!-- THEME (inline, light + dark) -->
   <style>
     :root{
-      /* SSBS brand */
-      --brand:#F4393A; --brand-accent:#FF7B79; --brand-dark:#C12D2E;
-      /* Dark (default) */
-      --bg:#0f172a; --panel:#111827; --panel-2:#0b1220; --ink:#e5e7eb; --muted:#94a3b8; --line:#1f2937;
+      /* Brand */
+      --brand:#F4393A; --brand-dark:#C12D2E; --brand-accent:#FF7B79;
+
+      /* Light */
+      --bg:#ffffff; --card-bg:#f5f8fa; --ink:#101820; --muted:#6c7a89;
+      --border:#dce3ea; --line:#cbd5e1; --ring:rgba(244,57,58,.25);
+      --glow:0 0 24px rgba(244,57,58,.15);
       --grad:linear-gradient(135deg,var(--brand),var(--brand-accent));
-      --ring:rgba(244,57,58,.35);
-    }
-    body.light{
-      --bg:#f8fafc; --panel:#ffffff; --panel-2:#f1f5f9; --ink:#0f172a; --muted:#475569; --line:#e2e8f0;
-      --ring:rgba(244,57,58,.25);
-    }
-    /* use variables */
-    body{ background:var(--bg); color:var(--ink); }
-    .panel{ background:var(--panel); border-color:var(--line); }
-    .panel-2{ background:var(--panel-2); border-color:var(--line); }
-    .muted{ color:var(--muted); }
-    .brand-grad{ background:var(--grad); }
-    .ring-brand:focus{ box-shadow:0 0 0 4px var(--ring); outline:none; }
 
-    /* scrollbar (optional) */
-    .thin-scroll::-webkit-scrollbar{ width:8px }
-    .thin-scroll::-webkit-scrollbar-thumb{ background:#00000022; border-radius:999px }
-    body.light .thin-scroll::-webkit-scrollbar-thumb{ background:#00000033 }
+      color-scheme: light dark;
+    }
+    [data-theme="dark"]{
+      --bg:#05070a; --card-bg:#0c1016; --ink:#e6f1ff; --muted:#8aa0b4;
+      --border:#17212c; --line:#243246; --ring:rgba(244,57,58,.35);
+      --glow:0 0 32px rgba(244,57,58,.25), inset 0 0 16px rgba(244,57,58,.08);
+      --grad:linear-gradient(135deg,var(--brand),var(--brand-dark));
+    }
+
+    /* Base */
+    *{box-sizing:border-box}
+    body{ margin:0; font:14px/1.5 'Inter', system-ui, Segoe UI, Roboto, Arial; color:var(--ink); background:var(--bg) }
+
+    /* Hide big title row when embedded; keep nav visible */
+    .is-embed .header-content{ display:none !important; }
+
+    header{ position:sticky; top:0; z-index:10; background:var(--card-bg); border-bottom:1px solid var(--border); box-shadow: var(--glow); }
+    .header-content{ display:flex; justify-content:space-between; align-items:center; gap:12px }
+    .wrap{ max-width:1200px; margin:0 auto; padding:14px }
+    h1{ margin:0; font-weight:900; letter-spacing:.5px; color:var(--ink); font-family:'Orbitron',sans-serif }
+
+    /* Theme toggle */
+    .theme-toggle{ border:1px solid var(--border); background:var(--card-bg); color:var(--ink); border-radius:10px; padding:8px 10px; cursor:pointer; font-weight:800 }
+    .theme-toggle:hover{ filter:brightness(1.05) }
+
+    nav{ display:flex; gap:10px; margin-top:12px; flex-wrap:wrap }
+    .nav-btn{ border:1px solid var(--border); background:var(--card-bg); color:var(--ink); border-radius:12px; padding:9px 14px; cursor:pointer; font-weight:900; letter-spacing:.2px; transition:transform .2s, box-shadow .2s, background .2s, border-color .2s; }
+    .nav-btn:not(.active):hover{ transform:translateY(-2px); background:rgba(0,0,0,.03); border-color:var(--line) }
+    [data-theme="dark"] .nav-btn:not(.active):hover{ background:rgba(255,255,255,.04) }
+    .nav-btn.active{ background:var(--grad); color:#fff; border-color:transparent; box-shadow:0 10px 26px var(--ring); font-family:'Orbitron',sans-serif; }
+    .bar{ height:3px; background:var(--grad); width:0; transition:width .45s cubic-bezier(.22,1,.36,1) }
+
+    main{ max-width:1200px; margin:14px auto; padding:0 14px }
+
+    .card{ background:var(--card-bg); border:1px solid var(--border); border-radius:16px; box-shadow: var(--glow), 0 18px 40px rgba(0,0,0,.35); padding:16px; transition:transform .25s ease, box-shadow .25s ease; position:relative; }
+    .card:hover{ transform:translateY(-3px); box-shadow: 0 22px 46px rgba(0,0,0,.45), var(--glow) }
+
+    .row{ display:grid; gap:12px }
+    .two{ grid-template-columns:1fr 1fr }
+    .three{ grid-template-columns:1fr 1fr 1fr }
+    label{ display:block; font-weight:900; margin:8px 0 4px; color:var(--muted) }
+
+    .input, select, textarea{
+      width:100%; padding:11px 12px; border-radius:12px;
+      border:1px solid var(--border); outline:none; background:var(--bg); color:var(--ink);
+      transition:border-color .15s, box-shadow .15s;
+      box-shadow: inset 0 0 0 9999px rgba(255,255,255,0);
+    }
+    .input:focus, select:focus, textarea:focus{ border-color:var(--brand); box-shadow: 0 0 0 3px var(--ring), 0 0 18px var(--ring); }
+    textarea{ min-height:110px; resize:vertical }
+
+    .btn{ border:0; border-radius:12px; padding:10px 14px; font-weight:900; cursor:pointer; transition:transform .2s, box-shadow .2s, filter .2s }
+    .btn-p{ background:var(--grad); color:#fff; box-shadow:0 10px 28px var(--ring); font-family:'Orbitron',sans-serif; letter-spacing:.4px }
+    .btn-p:hover{ transform:translateY(-2px); filter:brightness(1.08); box-shadow:0 14px 34px var(--ring) }
+
+    table{ width:100%; border-collapse:collapse; border-radius:12px; overflow:hidden }
+    th{ background:var(--card-bg); border-bottom:1px solid var(--line); text-align:left; font-size:12px; font-weight:800; color:var(--muted); padding:9px 8px; }
+    td{ border-bottom:1px solid var(--line); padding:9px 8px; font-size:13px; color:var(--ink) }
+
+    /* Big success popup */
+    .flash{
+      position:fixed; left:50%; top:50%; transform:translate(-50%,-50%);
+      width:min(720px,92vw); padding:20px 22px; border-radius:16px; color:#fff; text-align:left;
+      background:var(--grad); box-shadow: 0 30px 60px rgba(0,0,0,.35), 0 0 24px var(--ring);
+      opacity:0; pointer-events:none; transition:opacity .25s, transform .25s ease; z-index:9999; font-weight:800;
+    }
+    .flash h3{ margin:0 0 8px 0; font-family:'Orbitron',sans-serif }
+    .flash p{ margin:6px 0; font-weight:600 }
+    .flash.show{ opacity:1; pointer-events:auto; transform:translate(-50%,-50%) scale(1.0) }
+
+    /* Progress overlay */
+    .progress{ position:fixed; inset:0; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,.35); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px); z-index:9998; opacity:0; pointer-events:none; transition:opacity .2s; }
+    .progress.show{ opacity:1; pointer-events:auto }
+    .spinner{ width:42px; height:42px; border-radius:50%; border:4px solid var(--border); border-top-color:var(--brand); animation:spin 1s linear infinite }
+    @keyframes spin{ to{ transform:rotate(360deg) } }
+
+    /* Suggestions dropdown */
+    .sugs{ position:relative }
+    .sugs-list{ position:absolute; left:0; right:0; top:100%; z-index:20; background:var(--card-bg); border:1px solid var(--border); border-radius:12px; margin-top:4px; max-height:260px; overflow:auto; box-shadow:0 12px 30px rgba(0,0,0,.25); }
+    .sugs-item{ padding:8px 10px; cursor:pointer; display:flex; justify-content:space-between; align-items:center }
+    .sugs-item:hover{ background:rgba(0,0,0,.04) }
+    [data-theme="dark"] .sugs-item:hover{ background:rgba(255,255,255,.06) }
+    .tag{ font-size:.72rem; font-weight:800; padding:.1rem .45rem; border-radius:999px; color:#fff; background:var(--grad) }
+    .muted{ color:var(--muted) }
   </style>
-</head>
 
-<!-- default dark; router toggles .light on body -->
-<body class="">
-  <!-- Layout -->
-  <div class="min-h-screen flex">
-
-    <!-- Sidebar -->
-    <aside class="w-72 hidden md:flex flex-col border-r panel">
-      <!-- Brand / user -->
-      <div class="p-4 border-b border-gray-700" style="border-color:var(--line)">
-        <div class="flex items-center gap-3">
-          <!-- Replace with: <img src="assets/ssbs-logo.svg" class="w-10 h-10 rounded-lg" alt="SSBS"> -->
-          <div class="w-10 h-10 rounded-lg brand-grad flex items-center justify-center text-white font-extrabold shadow">SS</div>
-          <div>
-            <div class="text-lg font-extrabold">SSBS</div>
-            <div class="text-xs uppercase tracking-wide muted">Business Portal</div>
-          </div>
-        </div>
-        <div class="mt-3 text-sm">
-          <span class="muted">Signed in as</span> <b id="hiUser">—</b>
-        </div>
-      </div>
-
-      <!-- Nav -->
-      <nav class="flex-1 overflow-y-auto thin-scroll p-3 space-y-1">
-        <!-- Dashboard (override) -->
-        <button data-mod="dashboard" class="w-full text-left px-3 py-2 rounded-lg panel-2 border hover:opacity-95 focus:ring-brand ring-brand">
-          <span class="mr-2">🏠</span> Dashboard
-        </button>
-
-        <div class="mt-3 text-xs uppercase tracking-wider muted px-2">Operations</div>
-        <button data-mod="daily" class="w-full text-left px-3 py-2 rounded-lg panel-2 border hover:opacity-95">
-          <span class="mr-2">📅</span> Daily Application
-        </button>
-        <button data-mod="expense" class="w-full text-left px-3 py-2 rounded-lg panel-2 border hover:opacity-95">
-          <span class="mr-2">💰</span> Expense Management
-        </button>
-        <button data-mod="receive" class="w-full text-left px-3 py-2 rounded-lg panel-2 border hover:opacity-95">
-          <span class="mr-2">💵</span> Receiving Payments
-        </button>
-        <button data-mod="transfer" class="w-full text-left px-3 py-2 rounded-lg panel-2 border hover:opacity-95">
-          <span class="mr-2">🔄</span> Internal Transfer & Loan
-        </button>
-
-        <div class="mt-3 text-xs uppercase tracking-wider muted px-2">Billing</div>
-        <button data-mod="invoice" class="w-full text-left px-3 py-2 rounded-lg panel-2 border hover:opacity-95">
-          <span class="mr-2">🧾</span> Invoice Management
-        </button>
-        <button data-mod="invoice_d" class="w-full text-left px-3 py-2 rounded-lg panel-2 border hover:opacity-95">
-          <span class="mr-2">📑</span> Dummy Invoice
-        </button>
-        <button data-mod="quote" class="w-full text-left px-3 py-2 rounded-lg panel-2 border hover:opacity-95">
-          <span class="mr-2">💬</span> Quotation
-        </button>
-        <button data-mod="statement" class="w-full text-left px-3 py-2 rounded-lg panel-2 border hover:opacity-95">
-          <span class="mr-2">📊</span> Client Statement
-        </button>
-
-        <div class="mt-3 text-xs uppercase tracking-wider muted px-2">Records</div>
-        <button data-mod="docs" class="w-full text-left px-3 py-2 rounded-lg panel-2 border hover:opacity-95">
-          <span class="mr-2">📂</span> Document Management
-        </button>
-        <button data-mod="client" class="w-full text-left px-3 py-2 rounded-lg panel-2 border hover:opacity-95">
-          <span class="mr-2">👥</span> Client Management
-        </button>
-
-        <div class="mt-3 text-xs uppercase tracking-wider muted px-2">Team</div>
-        <button data-mod="task" class="w-full text-left px-3 py-2 rounded-lg panel-2 border hover:opacity-95">
-          <span class="mr-2">✅</span> Task Management
-        </button>
-        <button data-mod="mcp" class="w-full text-left px-3 py-2 rounded-lg panel-2 border hover:opacity-95">
-          <span class="mr-2">⚙️</span> Master Control Panel
-        </button>
-      </nav>
-
-      <!-- Footer actions -->
-      <div class="p-3 border-t" style="border-color:var(--line)">
-        <div class="flex gap-2">
-          <button id="themeBtn" class="flex-1 px-3 py-2 rounded-lg border panel-2 hover:opacity-95">☀️ Light</button>
-          <button id="btn_logout" class="flex-1 px-3 py-2 rounded-lg text-white brand-grad hover:opacity-95">Logout</button>
-        </div>
-      </div>
-    </aside>
-
-    <!-- Mobile topbar (shows on < md) -->
-    <header class="md:hidden w-full panel border-b">
-      <div class="px-4 py-3 flex items-center justify-between">
-        <div class="flex items-center gap-3">
-          <div class="w-9 h-9 rounded-lg brand-grad flex items-center justify-center text-white font-extrabold">SS</div>
-          <div>
-            <div class="font-extrabold">SSBS</div>
-            <div class="text-xs muted -mt-0.5">Business Portal</div>
-          </div>
-        </div>
-        <div class="flex items-center gap-2">
-          <button id="themeBtnMobile" class="px-3 py-1 rounded-lg border panel-2">☀️ Light</button>
-          <button id="btn_logout_m" class="px-3 py-1 rounded-lg text-white brand-grad">Logout</button>
-          <button id="menuToggle" class="px-3 py-1 rounded-lg border panel-2">☰</button>
-        </div>
-      </div>
-      <!-- slide-down menu -->
-      <div id="mobileMenu" class="hidden px-3 pb-3 space-y-1">
-        <div class="px-2 text-xs uppercase tracking-wider muted">Hello, <b id="hiUser_m">—</b></div>
-        <div class="grid grid-cols-2 gap-2">
-          <button data-mod="dashboard" class="px-3 py-2 rounded-lg panel-2 border">🏠 Dashboard</button>
-          <button data-mod="daily" class="px-3 py-2 rounded-lg panel-2 border">📅 Daily</button>
-          <button data-mod="expense" class="px-3 py-2 rounded-lg panel-2 border">💰 Expense</button>
-          <button data-mod="receive" class="px-3 py-2 rounded-lg panel-2 border">💵 Receive</button>
-          <button data-mod="transfer" class="px-3 py-2 rounded-lg panel-2 border">🔄 Transfer</button>
-          <button data-mod="invoice" class="px-3 py-2 rounded-lg panel-2 border">🧾 Invoice</button>
-          <button data-mod="invoice_d" class="px-3 py-2 rounded-lg panel-2 border">📑 Dummy</button>
-          <button data-mod="quote" class="px-3 py-2 rounded-lg panel-2 border">💬 Quote</button>
-          <button data-mod="statement" class="px-3 py-2 rounded-lg panel-2 border">📊 Statement</button>
-          <button data-mod="docs" class="px-3 py-2 rounded-lg panel-2 border">📂 Docs</button>
-          <button data-mod="client" class="px-3 py-2 rounded-lg panel-2 border">👥 Clients</button>
-          <button data-mod="task" class="px-3 py-2 rounded-lg panel-2 border">✅ Task</button>
-          <button data-mod="mcp" class="px-3 py-2 rounded-lg panel-2 border">⚙️ MCP</button>
-        </div>
-      </div>
-    </header>
-
-    <!-- Main content -->
-    <main class="flex-1">
-      <!-- Topbar (desktop) -->
-      <div class="hidden md:flex items-center justify-between px-6 py-4 border-b panel">
-        <div class="flex items-center gap-2">
-          <h1 class="text-xl font-bold">Dashboard</h1>
-          <span class="muted">• quick actions</span>
-        </div>
-        <div class="text-sm">
-          Welcome,&nbsp;<b id="hiUser_top">—</b>
-        </div>
-      </div>
-
-      <!-- Content -->
-      <div class="p-6 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-        <!-- Quick launch cards (open modules) -->
-        <button data-mod="daily" class="px-5 py-4 rounded-xl border panel hover:opacity-95 text-left">
-          <div class="text-2xl">📅</div>
-          <div class="mt-2 font-semibold">Daily Application</div>
-          <div class="text-sm muted">Enter new application, charges, portal, clients…</div>
-        </button>
-        <button data-mod="invoice" class="px-5 py-4 rounded-xl border panel hover:opacity-95 text-left">
-          <div class="text-2xl">🧾</div>
-          <div class="mt-2 font-semibold">Invoice Management</div>
-          <div class="text-sm muted">Create, view, or print invoices</div>
-        </button>
-        <button data-mod="client" class="px-5 py-4 rounded-xl border panel hover:opacity-95 text-left">
-          <div class="text-2xl">👥</div>
-          <div class="mt-2 font-semibold">Client Management</div>
-          <div class="text-sm muted">Add, edit, or search clients</div>
-        </button>
-
-        <button data-mod="expense" class="px-5 py-4 rounded-xl border panel hover:opacity-95 text-left">
-          <div class="text-2xl">💰</div>
-          <div class="mt-2 font-semibold">Expense Management</div>
-          <div class="text-sm muted">Track company expenses</div>
-        </button>
-        <button data-mod="receive" class="px-5 py-4 rounded-xl border panel hover:opacity-95 text-left">
-          <div class="text-2xl">💵</div>
-          <div class="mt-2 font-semibold">Receiving Payments</div>
-          <div class="text-sm muted">Record payments from clients</div>
-        </button>
-        <button data-mod="transfer" class="px-5 py-4 rounded-xl border panel hover:opacity-95 text-left">
-          <div class="text-2xl">🔄</div>
-          <div class="mt-2 font-semibold">Internal Transfer & Loan</div>
-          <div class="text-sm muted">Move funds between accounts</div>
-        </button>
-
-        <button data-mod="quote" class="px-5 py-4 rounded-xl border panel hover:opacity-95 text-left">
-          <div class="text-2xl">💬</div>
-          <div class="mt-2 font-semibold">Quotation</div>
-          <div class="text-sm muted">Create and manage quotes</div>
-        </button>
-        <button data-mod="statement" class="px-5 py-4 rounded-xl border panel hover:opacity-95 text-left">
-          <div class="text-2xl">📊</div>
-          <div class="mt-2 font-semibold">Client Statement</div>
-          <div class="text-sm muted">Statement of account by client</div>
-        </button>
-        <button data-mod="docs" class="px-5 py-4 rounded-xl border panel hover:opacity-95 text-left">
-          <div class="text-2xl">📂</div>
-          <div class="mt-2 font-semibold">Document Management</div>
-          <div class="text-sm muted">Store and retrieve documents</div>
-        </button>
-
-        <button data-mod="task" class="px-5 py-4 rounded-xl border panel hover:opacity-95 text-left">
-          <div class="text-2xl">✅</div>
-          <div class="mt-2 font-semibold">Task Management</div>
-          <div class="text-sm muted">Assign and monitor tasks</div>
-        </button>
-        <button data-mod="mcp" class="px-5 py-4 rounded-xl border panel hover:opacity-95 text-left">
-          <div class="text-2xl">⚙️</div>
-          <div class="mt-2 font-semibold">Master Control Panel</div>
-          <div class="text-sm muted">Global configuration</div>
-        </button>
-      </div>
-    </main>
-  </div>
-
-  <!-- Router (your unified logic) -->
-  <script src="app.js"></script>
-
-  <!-- Page wiring (sidebar, theme, session) -->
+  <!-- Pre-paint: set theme + detect embed -->
   <script>
-    // Theme: match router's 'ssbs_theme' key
-    (function themeBoot(){
-      const saved = localStorage.getItem('ssbs_theme') || 'dark';
-      if(saved === 'light') document.body.classList.add('light');
-      function setLabel(btn){ if(!btn) return; const isLight = document.body.classList.contains('light'); btn.textContent = isLight ? '🌙 Dark' : '☀️ Light'; }
-      const btnD = document.getElementById('themeBtn');
-      const btnM = document.getElementById('themeBtnMobile');
-      function toggle(){
-        document.body.classList.toggle('light');
-        localStorage.setItem('ssbs_theme', document.body.classList.contains('light') ? 'light' : 'dark');
-        setLabel(btnD); setLabel(btnM);
-      }
-      if(btnD){ btnD.onclick = toggle; setLabel(btnD); }
-      if(btnM){ btnM.onclick = toggle; setLabel(btnM); }
-    })();
-
-    // Session + user
-    (function userBoot(){
-      if(!window.SSBS){ console.error('SSBS router missing (app.js)'); return; }
-      const u = SSBS.currentUser();
-      if(!u){ location.href = 'index.html'; return; }
-      // Put name in UI
-      ['hiUser','hiUser_top','hiUser_m'].forEach(id => {
-        const el = document.getElementById(id);
-        if(el) el.textContent = u.name;
+    (function(){
+      const d=document.documentElement;
+      if(window.top!==window.self) d.classList.add('is-embed');
+      try{
+        const saved=localStorage.getItem('theme');
+        const prefersDark=matchMedia('(prefers-color-scheme: dark)').matches;
+        d.setAttribute('data-theme', saved || (prefersDark?'dark':'light'));
+      }catch(_){}
+      // listen for parent theme messages (when embedded later)
+      window.addEventListener('message',(e)=>{
+        const m=e.data||{};
+        if(m.type==='theme' && (m.value==='light'||m.value==='dark')){
+          d.setAttribute('data-theme', m.value);
+          try{ localStorage.setItem('theme', m.value); }catch(_){}
+        }
       });
-      // Keep-alive on interaction
-      ['click','keydown','touchstart'].forEach(evt =>
-        document.addEventListener(evt, () => SSBS.touch(), { passive:true })
-      );
-    })();
-
-    // Sidebar + mobile menu actions
-    (function wireNav(){
-      // All buttons with data-mod -> open module
-      function bind(root){
-        Array.from(root.querySelectorAll('[data-mod]')).forEach(btn=>{
-          btn.addEventListener('click', ()=> SSBS.openModule(btn.dataset.mod));
-        });
-      }
-      bind(document);
-
-      // Mobile menu toggle
-      const tog = document.getElementById('menuToggle');
-      const menu = document.getElementById('mobileMenu');
-      if(tog && menu){
-        tog.onclick = () => menu.classList.toggle('hidden');
-      }
-
-      // Logout
-      const loD = document.getElementById('btn_logout');
-      const loM = document.getElementById('btn_logout_m');
-      function doLogout(){ SSBS.logout(); location.href = 'index.html'; }
-      if(loD) loD.onclick = doLogout;
-      if(loM) loM.onclick = doLogout;
     })();
   </script>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="header-content">
+      <h1>SSBS • Clients</h1>
+      <button id="themeToggle" class="theme-toggle" type="button" aria-label="Toggle theme">🌙 Dark</button>
+    </div>
+    <nav>
+      <button class="nav-btn active" data-view="#vAdd"  type="button" onclick="setNav('#vAdd')">Add Client</button>
+      <button class="nav-btn"       data-view="#vEdit" type="button" onclick="setNav('#vEdit')">Edit / Search</button>
+    </nav>
+  </div>
+  <div id="bar" class="bar"></div>
+</header>
+
+<main>
+  <section id="vAdd" class="card">
+    <div class="row three" style="margin-bottom:8px">
+      <div>
+        <label>Client Type *</label>
+        <select id="aType" class="input" onchange="renderAdd()">
+          <option>Company</option><option>Individual</option><option>Dependent</option>
+        </select>
+      </div><div></div><div></div>
+    </div>
+
+    <div id="addFields" class="row two"></div>
+
+    <div style="margin-top:10px;display:flex;gap:8px">
+      <button class="btn btn-p" id="btnSave" type="button">Save</button>
+    </div>
+  </section>
+
+  <section id="vEdit" class="card" style="display:none">
+    <div class="row three">
+      <div class="sugs">
+        <input id="q" class="input" placeholder="Search by CLID / DPID / Name / Mobile / Identifier">
+        <div id="qSugs" class="sugs-list" style="display:none"></div>
+      </div>
+      <div>
+        <select id="filterType" class="input">
+          <option value="">All Types</option><option>Company</option><option>Individual</option><option>Dependent</option>
+        </select>
+      </div>
+      <div><button class="btn btn-p" type="button" onclick="doSearch()">Search</button></div>
+    </div>
+
+    <div style="margin-top:12px;overflow:auto">
+      <table>
+        <thead><tr><th style="width:130px">ID</th><th>Name</th><th style="width:120px">Type</th><th style="width:120px">Mobile</th><th style="width:90px"></th></tr></thead>
+        <tbody id="list"><tr><td colspan="5" style="text-align:center;color:var(--muted);padding:10px">Loading…</td></tr></tbody>
+      </table>
+    </div>
+  </section>
+</main>
+
+<!-- Big success popup -->
+<div id="flash" class="flash">
+  <h3>Success</h3>
+  <div id="flashBody"></div>
+</div>
+
+<!-- Progress overlay -->
+<div id="progress" class="progress"><div class="spinner" aria-label="Loading"></div></div>
+
+<!-- Editor modal -->
+<div id="modal-container" class="modal-container">
+  <div id="modal-content" class="card"></div>
+</div>
+
+<script>
+/* ===== Boot ===== */
+const PERSON = '<?= person ?>';     // used as CreatedBy on server
+let IDX = [];                        // [{id,name,type,mobile,row,hay}]
+let PARENTS = [];                    // [{clid,name,type}]
+
+/* ===== Utils ===== */
+const $ = id => document.getElementById(id);
+function bar(on){ $('bar').style.width = on ? '100%' : '0'; }
+function flash(html){ const box=$('flash'); $('flashBody').innerHTML=html; box.classList.add('show'); setTimeout(()=>box.classList.remove('show'), 3800); }
+function esc(s){ return String(s||'').replace(/[&<>"']/g,c=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c])); }
+function setNav(id){ document.querySelectorAll('.nav-btn').forEach(b=>b.classList.toggle('active', b.dataset.view===id)); document.querySelectorAll('main > section').forEach(s=>s.style.display='none'); document.querySelector(id).style.display='block'; }
+function showProgress(v){ $('progress').classList.toggle('show', !!v); }
+
+/* ===== Theme toggle ===== */
+(function(){
+  const btn = $('themeToggle');
+  function label(){
+    const dark = document.documentElement.getAttribute('data-theme')==='dark';
+    btn.textContent = dark ? '☀️ Light' : '🌙 Dark';
+  }
+  btn.addEventListener('click', ()=>{
+    const cur = document.documentElement.getAttribute('data-theme');
+    const next = cur==='dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    try{ localStorage.setItem('theme', next); }catch(_){}
+    // tell parent (Firebase shell) if embedded
+    try{ window.parent.postMessage({type:'theme', value: next}, '*'); }catch(_){}
+    label();
+  });
+  label();
+})();
+
+/* ===== Suggestions infra ===== */
+function attachSuggest(input, builder, onPick){
+  const wrap = input.parentElement.querySelector('.sugs-list') || input.parentElement.appendChild(Object.assign(document.createElement('div'),{className:'sugs-list',style:'display:none'}));
+  function render(){
+    const q = (input.value||'').trim().toLowerCase();
+    const items = builder(q);
+    wrap.innerHTML = items.map(it=>`<div class="sugs-item" data-id="${esc(it.id||'')}" data-row="${it.row||''}">
+      <div><b>${esc(it.name||'')}</b> <span class="muted">(${esc(it.type||'')})</span></div>
+      <div class="tag">${esc(it.id||'')}</div>
+    </div>`).join('');
+    wrap.style.display = items.length ? '' : 'none';
+  }
+  input.addEventListener('input', render);
+  input.addEventListener('focus', render);
+  document.addEventListener('click', (e)=>{ if(!wrap.contains(e.target) && e.target!==input) wrap.style.display='none'; });
+  wrap.addEventListener('click', (e)=>{
+    const item = e.target.closest('.sugs-item'); if(!item) return;
+    onPick({ id:item.dataset.id, row:Number(item.dataset.row)||0, name:item.querySelector('b')?.textContent||'' });
+    wrap.style.display='none';
+  });
+}
+function buildNameMatches(q, limit=8){ if(q.length<2) return []; q=q.toLowerCase(); return IDX.filter(r=>r.name && r.name.toLowerCase().includes(q)).slice(0,limit); }
+function buildMobileMatches(q, limit=8){ const t=q.replace(/\D/g,''); if(t.length<3) return []; return IDX.filter(r=>(r.mobile||'').includes(t)).slice(0,limit); }
+
+/* ===== Duplicate guard ===== */
+function findPotentialDuplicates(payload){
+  const norm=s=>(s||'').toLowerCase().replace(/\s+/g,' ').trim();
+  const nm=norm(payload.name); const mob=(payload.mobile||'').replace(/\D/g,''); const type=payload.type;
+  const hits=[];
+  for(const r of IDX){
+    const rnm=norm(r.name); const rmb=(r.mobile||'').replace(/\D/g,'');
+    if(r.type===type && (rnm===nm || rnm.startsWith(nm) || nm.startsWith(rnm) || (mob && rmb && mob===rmb))){
+      hits.push(r); if(hits.length>=8) break;
+    }
+  }
+  return hits;
+}
+
+/* ===== Render Add form ===== */
+function renderAdd(){
+  const t = $('aType').value;
+  const F = $('addFields'); F.innerHTML='';
+  if(t==='Company'){
+    F.innerHTML = `
+      <div class="sugs"><label>Trade License Number *</label><input id="aIdentifier" class="input" oninput="this.value=this.value.toUpperCase()" maxlength="20"><div class="sugs-list" style="display:none"></div></div>
+      <div><label>Emirate *</label><select id="aEmirate" class="input">
+        <option>Umm al-Quwain</option><option>Sharjah</option><option>Ajman</option><option>Dubai</option>
+        <option>Abu Dhabi</option><option>Ras al-Khaimah</option><option>Fujairah</option></select></div>
+      <div class="sugs"><label>Company Name *</label><input id="aName" class="input" oninput="this.value=this.value.toUpperCase()" maxlength="60"><div class="sugs-list" style="display:none"></div></div>
+      <div class="sugs"><label>Primary Mobile *</label><input id="aMobile" class="input" maxlength="10" placeholder="05xxxxxxxx"><div class="sugs-list" style="display:none"></div></div>
+      <div><label>Address (optional)</label><textarea id="aAddress" class="input" maxlength="80"></textarea></div>
+      <div><label>PO Box (optional)</label><input id="aPOBox" class="input" maxlength="10" oninput="togglePOEmirate()"></div>
+      <div><label>PO Box Emirate</label><select id="aPOEmirate" class="input">
+        <option value="">Select Emirate</option><option>Umm al-Quwain</option><option>Sharjah</option><option>Ajman</option><option>Dubai</option>
+        <option>Abu Dhabi</option><option>Ras al-Khaimah</option><option>Fujairah</option></select></div>
+      <div><label>Primary Email (optional)</label><input id="aEmail" class="input" type="email" oninput="this.value=this.value.trim().toLowerCase()"></div>
+    `;
+  } else if(t==='Individual'){
+    F.innerHTML = `
+      <div><label>Identifier Type *</label><select id="aIdType" class="input"><option>EmiratesID</option><option>UID</option><option>Passport</option></select></div>
+      <div class="sugs"><label>Identifier *</label><input id="aIdentifier" class="input" maxlength="20"><div class="sugs-list" style="display:none"></div></div>
+      <div><label>Emirate (optional)</label><select id="aEmirate" class="input">
+        <option value="">Select Emirate</option><option>Umm al-Quwain</option><option>Sharjah</option><option>Ajman</option><option>Dubai</option>
+        <option>Abu Dhabi</option><option>Ras al-Khaimah</option><option>Fujairah</option></select></div>
+      <div class="sugs"><label>Individual Name *</label><input id="aName" class="input" oninput="this.value=this.value.toUpperCase()" maxlength="80"><div class="sugs-list" style="display:none"></div></div>
+      <div class="sugs"><label>Primary Mobile *</label><input id="aMobile" class="input" maxlength="10" placeholder="05xxxxxxxx"><div class="sugs-list" style="display:none"></div></div>
+      <div><label>Secondary Email (optional)</label><input id="aEmail" class="input" type="email" oninput="this.value=this.value.trim().toLowerCase()"></div>
+    `;
+    bindIdMask('aIdType','aIdentifier');
+  } else {
+    F.innerHTML = `
+      <div style="grid-column:1/-1"><label>Parent Client *</label><select id="aParent" class="input"><option value="">Select Parent</option></select></div>
+      <div id="relWrap" style="grid-column:1/-1;display:none"><label>Relation *</label>
+        <select id="aRelation" class="input"><option value="">Select Relation</option>
+          <option>Father</option><option>Mother</option><option>Son</option><option>Daughter</option><option>Husband</option><option>Wife</option></select>
+      </div>
+      <div><label>Identifier Type *</label><select id="aIdType" class="input"><option>EmiratesID</option><option>UID</option><option>Passport</option></select></div>
+      <div class="sugs"><label>Identifier *</label><input id="aIdentifier" class="input" maxlength="20"><div class="sugs-list" style="display:none"></div></div>
+      <div class="sugs" style="grid-column:1/-1"><label>Dependent Name *</label><input id="aName" class="input" oninput="this.value=this.value.toUpperCase()" maxlength="80"><div class="sugs-list" style="display:none"></div></div>
+    `;
+    const sel=$('aParent');
+    sel.innerHTML='<option value="">Select Parent</option>'+PARENTS.map(c=>`<option value="${c.clid}" data-type="${c.type}">${c.clid} — ${esc(c.name)} (${c.type})</option>`).join('');
+    sel.addEventListener('change',()=>{
+      const t=sel.selectedOptions[0]?.getAttribute('data-type')||'';
+      $('relWrap').style.display=(t==='Individual')?'':'none';
+      if(t==='Company'){ $('aRelation')?.setAttribute('data-auto','Employee'); }
+      else{ $('aRelation')?.removeAttribute('data-auto'); }
+    });
+    bindIdMask('aIdType','aIdentifier');
+  }
+
+  // Attach suggestions
+  const nameInput = $('aName');
+  if(nameInput) attachSuggest(nameInput, q => buildNameMatches(q), pick => {
+    if(confirm(`"${pick.name}" already exists (${pick.id}). Open to edit?`)) openEdit(pick.row);
+  });
+  const mobInput = $('aMobile');
+  if(mobInput) attachSuggest(mobInput, q => buildMobileMatches(q), pick => {
+    if(confirm(`Mobile already used by ${pick.name} (${pick.id}). Open to edit?`)) openEdit(pick.row);
+  });
+}
+function bindIdMask(selId,inputId){
+  const sel=$(selId), inp=$(inputId);
+  function apply(){
+    const t=sel.value;
+    if(t==='EmiratesID'){ inp.value=inp.value.replace(/\D/g,'').slice(0,15); inp.placeholder='784xxxxxxxxxxxxx'; }
+    else if(t==='UID'){ inp.value=inp.value.replace(/\D/g,'').slice(0,10); inp.placeholder='UID (max 10 digits)'; }
+    else{ inp.value=inp.value.toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,10); inp.placeholder='Passport (A–Z / 0–9)'; }
+  }
+  sel.addEventListener('change',apply); inp.addEventListener('input',apply); apply();
+}
+function togglePOEmirate(){ const po=($('aPOBox')?.value||'').trim(); if(po==='') $('aPOEmirate').value=''; }
+
+/* ===== Save (with duplicate guard + progress + big success) ===== */
+$('btnSave').onclick=()=>{
+  const v=id=>($(id)?.value||'').trim();
+  const t=$('aType').value;
+
+  if(t==='Company'){
+    if(!v('aIdentifier')||!v('aEmirate')||!v('aName')||!v('aMobile')) return flash('❌ Company: Emirate, Name, Trade License, Mobile are required.');
+    if(v('aPOBox')&&!v('aPOEmirate')) return flash('❌ Choose PO Box Emirate when PO is entered.');
+  } else if(t==='Individual'){
+    if(!v('aIdentifier')||!v('aName')||!v('aMobile')) return flash('❌ Individual: Identifier, Name, Mobile are required.');
+  } else {
+    if(!v('aParent')||!v('aIdentifier')||!v('aName')) return flash('❌ Dependent: Parent, Identifier, Name are required.');
+    const pt=$('aParent').selectedOptions[0]?.getAttribute('data-type')||'';
+    if(pt==='Individual'&&!v('aRelation')) return flash('❌ Dependent: Relation is required when parent is Individual.');
+  }
+
+  const payload={ type:t };
+  if(t==='Company'){
+    Object.assign(payload,{identifier:v('aIdentifier'),emirate:v('aEmirate'),name:v('aName'),mobile:v('aMobile'),email:v('aEmail'),address:v('aAddress'),pobox:v('aPOBox')});
+  } else if(t==='Individual'){
+    Object.assign(payload,{identifier:v('aIdentifier'),emirate:v('aEmirate'),name:v('aName'),mobile:v('aMobile'),email:v('aEmail')});
+  } else {
+    const pt=$('aParent').selectedOptions[0]?.getAttribute('data-type')||'';
+    const relation=(pt==='Company')?'Employee':(v('aRelation')||'');
+    Object.assign(payload,{parentClient:v('aParent'),parentType:pt,identifier:v('aIdentifier'),name:v('aName'),relation});
+  }
+
+  const dups = findPotentialDuplicates({ name:payload.name, mobile:payload.mobile, type:payload.type });
+  if(dups.length){
+    const msg = `Possible duplicates found:\n` + dups.map(d=>`• ${d.id} — ${d.name} (${d.type})`).join('\n') + `\n\nDo you still want to create a new entry?`;
+    if(!confirm(msg)) return;
+  }
+
+  bar(true); showProgress(true);
+  google.script.run.withSuccessHandler(newId=>{
+    bar(false); showProgress(false);
+    const lines = [
+      `<b>ID:</b> ${esc(newId)}`,
+      `<b>Type:</b> ${esc(payload.type)}`,
+      payload.name ? `<b>Name:</b> ${esc(payload.name)}` : '',
+      payload.identifier ? `<b>Identifier:</b> ${esc(payload.identifier)}` : '',
+      payload.mobile ? `<b>Mobile:</b> ${esc(payload.mobile)}` : '',
+      payload.parentClient ? `<b>Parent:</b> ${esc(payload.parentClient)} (${esc(payload.parentType||'')})` : ''
+    ].filter(Boolean).join('<br>');
+    flash(`🎉 Created successfully!<br>${lines}`);
+    $('aType').value='Company'; renderAdd();
+    loadInitialData();
+  }).withFailureHandler(err=>{ bar(false); showProgress(false); flash('❌ '+esc(err.message||'Failed')); })
+    .addClient(payload, PERSON);
+};
+
+/* ===== Edit/Search ===== */
+function doSearch(){
+  const t=($('q').value||'').toLowerCase().trim();
+  const type=$('filterType').value;
+  let out=IDX;
+  if(t) out=out.filter(x=>x.hay.includes(t));
+  if(type) out=out.filter(x=>x.type===type);
+  renderList(out.slice(0,200));
+}
+function renderList(list){
+  const tb=$('list'); tb.innerHTML='';
+  if(!list.length){ tb.innerHTML='<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:10px">No results</td></tr>'; return; }
+  list.forEach(r=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td>${esc(r.id)}</td><td>${esc(r.name)}</td><td>${esc(r.type)}</td><td>${esc(r.mobile)}</td>
+                  <td><button class="btn btn-p" type="button" onclick="openEdit(${r.row})">Edit</button></td>`;
+    tb.appendChild(tr);
+  });
+}
+// Live suggestions in Edit search bar
+(function(){
+  const q=$('q'), box=$('qSugs');
+  function render(){
+    const term=(q.value||'').trim().toLowerCase();
+    if(term.length<2){ box.style.display='none'; return; }
+    const items=IDX.filter(r=>r.hay.includes(term)).slice(0,10);
+    box.innerHTML=items.map(r=>`<div class="sugs-item" data-row="${r.row}"><div><b>${esc(r.name)}</b> <span class="muted">(${esc(r.type)})</span></div><div class="tag">${esc(r.id)}</div></div>`).join('');
+    box.style.display=items.length?'':'none';
+  }
+  q.addEventListener('input',render);
+  q.addEventListener('focus',render);
+  box.addEventListener('click',e=>{
+    const it=e.target.closest('.sugs-item'); if(!it) return;
+    openEdit(Number(it.dataset.row)||0); box.style.display='none';
+  });
+  document.addEventListener('click',(e)=>{ if(!box.contains(e.target) && e.target!==q) box.style.display='none'; });
+})();
+
+/* ===== Modal edit (row-based; keep until you switch to ID-based endpoints) ===== */
+function closeModal(){ $('modal-container').classList.remove('show'); }
+function openEdit(row){
+  bar(true);
+  const modalContent=$('modal-content');
+  modalContent.innerHTML='<div style="text-align:center;padding:24px;color:var(--muted)">Loading Editor…</div>';
+  $('modal-container').classList.add('show');
+
+  google.script.run.withSuccessHandler(obj=>{
+    bar(false);
+    modalContent.innerHTML = `
+      <button class="close-btn" type="button" onclick="closeModal()">×</button>
+      <h3 style="margin:0 0 12px 0; color:var(--ink); font-family:'Orbitron',sans-serif">Edit Client</h3>
+      <div class="row two">
+        <div><label>Identifier</label><input id="eIdentifier" class="input" value="${esc(obj.Identifier)}" maxlength="20"></div>
+        <div><label>Emirate</label><input id="eEmirate" class="input" value="${esc(obj.Emirate)}"></div>
+        <div><label>Relation</label><input id="eRelation" class="input" value="${esc(obj.Relation)}"></div>
+        <div><label>Name</label><input id="eName" class="input" value="${esc(obj.Name)}" maxlength="80"></div>
+        <div><label>Mobile</label><input id="eMobile" class="input" value="${esc(obj.Mobile)}" maxlength="10"></div>
+        <div><label>WhatsApp Number</label><input id="eWA" class="input" value="${esc(obj.WhatsAppNumber)}" maxlength="10"></div>
+        <div><label>Secondary Email</label><input id="eEmail" class="input" value="${esc(obj.SecondaryEmail)}"></div>
+        <div><label>Address</label><input id="eAddress" class="input" value="${esc(obj.Address)}" maxlength="80"></div>
+        <div><label>PO Box</label><input id="ePOBox" class="input" value="${esc(obj.POBox)}" maxlength="10"></div>
+      </div>
+      <div style="margin-top:10px"><button class="btn btn-p" type="button" onclick="saveEdit(${obj.row})">Update</button></div>
+    `;
+  }).withFailureHandler(e=>{ bar(false); closeModal(); flash('❌ '+esc(e.message||'Error loading row')); })
+    .getByRow(row);
+}
+function saveEdit(row){
+  const payload={
+    row,
+    Identifier: $('eIdentifier').value.trim(),
+    Emirate: $('eEmirate').value.trim(),
+    Relation: $('eRelation').value.trim(),
+    Name: $('eName').value.trim(),
+    Mobile: $('eMobile').value.trim(),
+    WhatsAppNumber: $('eWA').value.trim(),
+    SecondaryEmail: $('eEmail').value.trim(),
+    Address: $('eAddress').value.trim(),
+    POBox: $('ePOBox').value.trim()
+  };
+  bar(true); showProgress(true);
+  google.script.run.withSuccessHandler(data=>{
+    bar(false); showProgress(false); closeModal(); flash('✔️ Updated');
+    if(data){ IDX=data.index||[]; PARENTS=data.parents||[]; }
+    doSearch();
+  }).withFailureHandler(e=>{ bar(false); showProgress(false); flash('❌ '+esc(e.message||'Update failed')); })
+    .updateClient(payload);
+}
+
+/* ===== Initial load ===== */
+function loadInitialData(){
+  bar(true);
+  google.script.run.withSuccessHandler(data=>{
+    bar(false);
+    if(data){ IDX=data.index||[]; PARENTS=data.parents||[]; } else { IDX=[]; PARENTS=[]; flash('❌ Could not load initial data. Please refresh.'); }
+    renderList(IDX.slice(0,25));
+    renderAdd();
+  }).withFailureHandler(e=>{ bar(false); flash('❌ '+esc(e.message||'Error loading data')); })
+    .getInitialData();
+}
+loadInitialData();
+
+$('modal-container').addEventListener('click',e=>{ if(e.target===e.currentTarget) closeModal(); });
+</script>
 </body>
 </html>
-
